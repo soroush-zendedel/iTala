@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ITALA | خرید طلا | ایتالا</title>
+  <meta name="description" content="قبل از فروش طلا، قیمت ما رو مقایسه کن. خرید طلای دست دوم در زاهدان." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              50: '#fdf8ef', 100: '#f9efd9', 200: '#f2dcab', 300: '#e9c574',
+              400: '#e0a93c', 500: '#d4af37', 600: '#b8942a', 700: '#967422',
+              800: '#7a5e1f', 900: '#664e1d'
+            },
+            cream: '#faf6f0'
+          },
+          fontFamily: {
+            sans: ['Vazirmatn', 'Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+  <style>
+    :root { --bg: #faf6f0; --fg: #1a1a1a; --card: #fff; --border: #e8e0d0; --muted: #6b6560; }
+    .dark { --bg: #0c0c0c; --fg: #f5f0e6; --card: #161616; --border: #2a2a2a; --muted: #a09a90; }
+    body { background: var(--bg); color: var(--fg); font-family: Vazirmatn, Inter, sans-serif; transition: background .2s, color .2s; }
+    .card { background: var(--card); border-color: var(--border); }
+    .muted { color: var(--muted); }
+  </style>
+</head>
+<body class="min-h-screen antialiased">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--bg)]/90 backdrop-blur-md">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+      <a href="#home" class="text-2xl font-bold tracking-tight text-gold-600 dark:text-gold-400" id="brand">ایتالا</a>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a href="#price" class="hover:text-gold-600 transition" data-i18n="nav.home">خانه</a>
+        <a href="#calculator" class="hover:text-gold-600 transition" data-i18n="nav.calculator">ماشین‌حساب</a>
+        <a href="#charts" class="hover:text-gold-600 transition" data-i18n="nav.charts">نمودار قیمت</a>
+        <a href="#process" class="hover:text-gold-600 transition" data-i18n="nav.process">فرآیند معامله</a>
+        <a href="#contact" class="hover:text-gold-600 transition" data-i18n="nav.contact">تماس</a>
+      </nav>
+      <div class="flex items-center gap-2">
+        <button id="langBtn" class="rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-gold-100 dark:hover:bg-zinc-800 transition">English</button>
+        <button id="themeBtn" class="rounded-lg p-2 hover:bg-gold-100 dark:hover:bg-zinc-800 transition" aria-label="theme">🌙</button>
+        <a href="tel:09015043008" class="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-gold-500 px-4 py-2 text-sm font-semibold text-white hover:bg-gold-600 transition">
+          📞 09015043008
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero / Price -->
+    <section id="price" class="py-12 sm:py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <div class="text-center mb-10">
+          <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-3" data-i18n="hero.title">قیمت خرید طلای شما</h1>
+          <p class="muted max-w-xl mx-auto text-lg" data-i18n="tagline">قبل از فروش طلا، قیمت ما رو مقایسه کن.</p>
+        </div>
+        <div class="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto">
+          <div class="rounded-2xl border card p-6 shadow-sm hover:shadow-md transition">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-gold-500">⚖️</span>
+              <h2 class="font-semibold text-lg" data-i18n="price.itala18k">طلای ۱۸ عیار</h2>
+            </div>
+            <div class="flex items-baseline gap-1">
+              <span id="price18k" class="text-3xl sm:text-4xl font-bold text-gold-600 dark:text-gold-400">—</span>
+              <span class="muted text-sm" data-i18n="price.unit">تومان / هر گرم</span>
+            </div>
+          </div>
+          <div class="rounded-2xl border card p-6 shadow-sm hover:shadow-md transition">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-gold-500">⚖️</span>
+              <h2 class="font-semibold text-lg" data-i18n="price.italaMelted">طلای ذوب‌شده</h2>
+            </div>
+            <div class="flex items-baseline gap-1">
+              <span id="priceMelted" class="text-3xl sm:text-4xl font-bold text-gold-600 dark:text-gold-400">—</span>
+              <span class="muted text-sm" data-i18n="price.unit">تومان / هر گرم</span>
+            </div>
+          </div>
+        </div>
+        <p class="mt-6 text-center text-sm muted max-w-lg mx-auto" data-i18n="price.note">قیمت نهایی پس از توزین و تعیین عیار در محل معامله مشخص می‌شود.</p>
+      </div>
+    </section>
+
+    <!-- Calculator -->
+    <section id="calculator" class="py-12 sm:py-16 bg-[var(--card)]/50">
+      <div class="mx-auto max-w-2xl px-4 sm:px-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8" data-i18n="calculator.title">ماشین‌حساب مقایسه قیمت</h2>
+        <div class="rounded-2xl border card p-6 sm:p-8 shadow-sm space-y-5">
+          <div>
+            <label class="block text-sm font-medium mb-2" data-i18n="calculator.category">دسته طلا</label>
+            <div class="flex gap-3">
+              <button type="button" data-cat="18k" class="cat-btn flex-1 rounded-xl py-3 text-sm font-medium bg-gold-500 text-white">طلای ۱۸ عیار</button>
+              <button type="button" data-cat="melted" class="cat-btn flex-1 rounded-xl py-3 text-sm font-medium bg-gold-50 dark:bg-zinc-800 hover:bg-gold-100">طلای ذوب‌شده</button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2" data-i18n="calculator.weight">وزن (گرم)</label>
+            <input id="weightInput" type="text" inputmode="decimal" placeholder="مثال: ۱۲٫۵" class="w-full rounded-xl border border-[var(--border)] bg-transparent px-4 py-3 text-lg focus:border-gold-500" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2" data-i18n="calculator.competitor">قیمت خریدار دیگر (هر گرم به تومان)</label>
+            <input id="competitorInput" type="text" inputmode="decimal" placeholder="قیمت هر گرم رقیب" class="w-full rounded-xl border border-[var(--border)] bg-transparent px-4 py-3 text-lg focus:border-gold-500" />
+          </div>
+          <button id="calcBtn" class="w-full rounded-xl bg-gold-500 py-3.5 text-base font-semibold text-white hover:bg-gold-600 transition shadow-sm" data-i18n="calculator.calculate">محاسبه</button>
+          <div id="resultBox" class="hidden mt-6 space-y-4 border-t border-[var(--border)] pt-6"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section id="charts" class="py-12 sm:py-16">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8" data-i18n="charts.title">نمودار قیمت تاریخی</h2>
+        <div class="flex justify-center gap-2 mb-6">
+          <button data-range="daily" class="range-btn rounded-full px-4 py-1.5 text-sm font-medium bg-gold-500 text-white">روزانه</button>
+          <button data-range="weekly" class="range-btn rounded-full px-4 py-1.5 text-sm font-medium bg-gold-50 dark:bg-zinc-800">هفتگی</button>
+          <button data-range="monthly" class="range-btn rounded-full px-4 py-1.5 text-sm font-medium bg-gold-50 dark:bg-zinc-800">ماهانه</button>
+        </div>
+        <div class="rounded-2xl border card p-4 sm:p-6 shadow-sm">
+          <div id="chartContainer" class="w-full h-80"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section id="process" class="py-12 sm:py-16 bg-[var(--card)]/50">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-10" data-i18n="process.title">فرآیند معامله</h2>
+        <div id="steps" class="space-y-6"></div>
+        <div class="mt-10 rounded-xl border border-amber-300/50 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-700/40 p-4 text-center text-sm text-amber-800 dark:text-amber-200" data-i18n="process.paymentNote">
+          توجه: پرداخت وجه روز بعد از معامله بین ساعت ۱۲:۵۰ تا ۱۳:۳۰ انجام می‌شود.
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="py-12 sm:py-16">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-10" data-i18n="contact.title">تماس و آدرس</h2>
+        <div class="grid gap-6 sm:grid-cols-3">
+          <a href="tel:09015043008" class="rounded-2xl border card p-6 text-center shadow-sm hover:shadow-md hover:border-gold-400 transition group">
+            <div class="text-3xl mb-3">📞</div>
+            <h3 class="font-semibold mb-1" data-i18n="contact.phone">تلفن</h3>
+            <p class="text-gold-600 dark:text-gold-400 font-medium dir-ltr">09015043008</p>
+          </a>
+          <div class="rounded-2xl border card p-6 text-center shadow-sm">
+            <div class="text-3xl mb-3">📍</div>
+            <h3 class="font-semibold mb-1" data-i18n="contact.location">محل معامله</h3>
+            <p class="text-sm muted leading-relaxed" data-i18n="contact.address">طلافروشی رضوان، کوچه حافظ، مرکز خرید برلیان، واحد ۱۹، زاهدان</p>
+          </div>
+          <div class="rounded-2xl border card p-6 text-center shadow-sm">
+            <div class="text-3xl mb-3">🕐</div>
+            <h3 class="font-semibold mb-1" data-i18n="contact.hours">ساعات کاری</h3>
+            <p class="text-sm muted" data-i18n="contact.hoursValue">۱۱:۰۰–۱۳:۳۰ و ۱۶:۰۰–۲۰:۰۰</p>
+          </div>
+        </div>
+        <div class="mt-8 text-center">
+          <a href="tel:09015043008" class="inline-flex items-center gap-2 rounded-full bg-gold-500 px-8 py-3.5 text-base font-semibold text-white shadow-md hover:bg-gold-600 transition" data-i18n="contact.callNow">تماس بگیرید</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-[var(--border)] py-8">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm muted">
+      <div>© 2026 <span id="footerBrand">ایتالا</span>. <span data-i18n="footer.rights">تمامی حقوق محفوظ است.</span></div>
+      <a href="https://github.com" target="_blank" rel="noopener" class="hover:text-gold-600 transition" data-i18n="footer.openSource">اوپن‌سورس روی گیت‌هاب</a>
+    </div>
+  </footer>
+
+  <script>
+    // ========== i18n ==========
+    const T = {
+      fa: {
+        brand: "ایتالا", tagline: "قبل از فروش طلا، قیمت ما رو مقایسه کن.",
+        nav: { home: "خانه", calculator: "ماشین‌حساب", charts: "نمودار قیمت", process: "فرآیند معامله", contact: "تماس" },
+        hero: { title: "قیمت خرید طلای شما" },
+        price: { itala18k: "طلای ۱۸ عیار", italaMelted: "طلای ذوب‌شده", unit: "تومان / هر گرم", note: "قیمت نهایی پس از توزین و تعیین عیار در محل معامله مشخص می‌شود." },
+        calculator: { title: "ماشین‌حساب مقایسه قیمت", category: "دسته طلا", weight: "وزن (گرم)", competitor: "قیمت خریدار دیگر (هر گرم به تومان)", calculate: "محاسبه", italaPrice: "قیمت ایتالا (هر گرم)", italaTotal: "پیشنهاد ایتالا", competitorTotal: "پیشنهاد رقیب", difference: "تفاوت", italaBetter: "پیشنهاد ایتالا بهتر است", competitorBetter: "پیشنهاد رقیب بهتر است", equal: "هر دو پیشنهاد برابر هستند" },
+        charts: { title: "نمودار قیمت تاریخی", daily: "روزانه", weekly: "هفتگی", monthly: "ماهانه" },
+        process: {
+          title: "فرآیند معامله",
+          steps: [
+            { title: "مشاهده قیمت", desc: "قیمت روز را در سایت ببینید" },
+            { title: "محاسبه ارزش", desc: "با ماشین‌حساب ارزش تقریبی طلای خود را حساب کنید" },
+            { title: "مقایسه", desc: "پیشنهاد ایتالا را با خریدار دیگر مقایسه کنید" },
+            { title: "تماس", desc: "با شماره ۰۹۰۱۵۰۴۳۰۸۰ تماس بگیرید" },
+            { title: "مراجعه حضوری", desc: "به آدرس طلافروشی رضوان مراجعه کنید" },
+            { title: "توزین و بازرسی", desc: "طلا توزین و عیارسنجی می‌شود" },
+            { title: "تحویل و رسید", desc: "طلا تحویل و رسید کتبی دریافت می‌کنید" },
+            { title: "پرداخت", desc: "پرداخت روز بعد بین ۱۲:۵۰ تا ۱۳:۳۰ انجام می‌شود" }
+          ],
+          paymentNote: "توجه: پرداخت وجه روز بعد از معامله بین ساعت ۱۲:۵۰ تا ۱۳:۳۰ انجام می‌شود."
+        },
+        contact: { title: "تماس و آدرس", phone: "تلفن", location: "محل معامله", address: "طلافروشی رضوان، کوچه حافظ، مرکز خرید برلیان، واحد ۱۹، زاهدان", hours: "ساعات کاری", hoursValue: "۱۱:۰۰–۱۳:۳۰ و ۱۶:۰۰–۲۰:۰۰", callNow: "تماس بگیرید" },
+        footer: { rights: "تمامی حقوق محفوظ است.", openSource: "اوپن‌سورس روی گیت‌هاب" },
+        lang: "English"
+      },
+      en: {
+        brand: "ITALA", tagline: "Before selling your gold, compare our price.",
+        nav: { home: "Home", calculator: "Calculator", charts: "Price Charts", process: "Process", contact: "Contact" },
+        hero: { title: "We Buy Your Gold" },
+        price: { itala18k: "18-karat gold", italaMelted: "Melted gold", unit: "Toman / per gram", note: "Final price is determined after weighing and purity verification at the transaction location." },
+        calculator: { title: "Price Comparison Calculator", category: "Gold category", weight: "Weight (grams)", competitor: "Other buyer's price (per gram in Toman)", calculate: "Calculate", italaPrice: "ITALA price (per gram)", italaTotal: "ITALA offer", competitorTotal: "Competitor offer", difference: "Difference", italaBetter: "ITALA offer is better", competitorBetter: "Competitor offer is better", equal: "Both offers are equal" },
+        charts: { title: "Historical Price Chart", daily: "Daily", weekly: "Weekly", monthly: "Monthly" },
+        process: {
+          title: "Transaction Process",
+          steps: [
+            { title: "Check price", desc: "View today's price on the website" },
+            { title: "Calculate value", desc: "Estimate your gold's value with the calculator" },
+            { title: "Compare", desc: "Compare ITALA's offer with another buyer" },
+            { title: "Call", desc: "Call 09015043008" },
+            { title: "Visit in person", desc: "Come to RezaVan Jewelry Store" },
+            { title: "Weigh & inspect", desc: "Gold is weighed and purity verified" },
+            { title: "Hand over & receipt", desc: "Gold is handed over against a written receipt" },
+            { title: "Payment", desc: "Payment is transferred the next day between 12:50 and 13:30" }
+          ],
+          paymentNote: "Note: Payment is made the day after the transaction between 12:50 and 13:30."
+        },
+        contact: { title: "Contact & Location", phone: "Phone", location: "Transaction location", address: "RezaVan Jewelry Store, Kooche Hafez, Borlian Shopping Center, Unit 19, Zahedan, Iran", hours: "Business hours", hoursValue: "11:00–13:30 and 16:00–20:00", callNow: "Call now" },
+        footer: { rights: "All rights reserved.", openSource: "Open source on GitHub" },
+        lang: "فارسی"
+      }
+    };
+
+    let locale = localStorage.getItem("itala-locale") || "fa";
+    let theme = localStorage.getItem("itala-theme") || "light";
+    let referencePrice = 38500000; // Rial
+    let history = [];
+    let currentRange = "daily";
+    let chart = null;
+    let series = null;
+
+    const MULTIPLIER = 0.98;
+    const toToman = r => Math.round(r / 10);
+    const fmt = (n) => new Intl.NumberFormat(locale === "fa" ? "fa-IR" : "en-US").format(Math.round(n));
+
+    function applyLocale() {
+      const t = T[locale];
+      document.documentElement.lang = locale;
+      document.documentElement.dir = locale === "fa" ? "rtl" : "ltr";
+      document.getElementById("brand").textContent = t.brand;
+      document.getElementById("footerBrand").textContent = t.brand;
+      document.getElementById("langBtn").textContent = t.lang;
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const keys = el.getAttribute("data-i18n").split(".");
+        let val = t;
+        for (const k of keys) val = val?.[k];
+        if (typeof val === "string") el.textContent = val;
+      });
+
+      // Update category buttons
+      document.querySelectorAll(".cat-btn").forEach(btn => {
+        const cat = btn.dataset.cat;
+        btn.textContent = cat === "18k" ? t.price.itala18k : t.price.italaMelted;
+      });
+
+      // Range buttons
+      document.querySelectorAll(".range-btn").forEach(btn => {
+        const r = btn.dataset.range;
+        btn.textContent = t.charts[r];
+      });
+
+      // Steps
+      const stepsEl = document.getElementById("steps");
+      stepsEl.innerHTML = t.process.steps.map((s, i) => `
+        <div class="flex gap-4 items-start">
+          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gold-500 text-white flex items-center justify-center text-sm font-bold">${i + 1}</div>
+          <div>
+            <h3 class="font-semibold">${s.title}</h3>
+            <p class="text-sm muted">${s.desc}</p>
+          </div>
+        </div>
+      `).join("");
+
+      updatePrices();
+      if (chart) updateChart();
+    }
+
+    function applyTheme() {
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      document.getElementById("themeBtn").textContent = theme === "dark" ? "☀️" : "🌙";
+      if (chart) {
+        // recreate chart on theme change is simpler
+        initChart();
+      }
+    }
+
+    function updatePrices() {
+      const p = toToman(Math.round(referencePrice * MULTIPLIER));
+      document.getElementById("price18k").textContent = fmt(p);
+      document.getElementById("priceMelted").textContent = fmt(p);
+    }
+
+    // Theme & Lang
+    document.getElementById("langBtn").onclick = () => {
+      locale = locale === "fa" ? "en" : "fa";
+      localStorage.setItem("itala-locale", locale);
+      applyLocale();
+    };
+    document.getElementById("themeBtn").onclick = () => {
+      theme = theme === "light" ? "dark" : "light";
+      localStorage.setItem("itala-theme", theme);
+      applyTheme();
+    };
+
+    // Category
+    let selectedCat = "18k";
+    document.querySelectorAll(".cat-btn").forEach(btn => {
+      btn.onclick = () => {
+        selectedCat = btn.dataset.cat;
+        document.querySelectorAll(".cat-btn").forEach(b => {
+          b.classList.remove("bg-gold-500", "text-white");
+          b.classList.add("bg-gold-50", "dark:bg-zinc-800");
+        });
+        btn.classList.add("bg-gold-500", "text-white");
+        btn.classList.remove("bg-gold-50", "dark:bg-zinc-800");
+      };
+    });
+
+    // Calculator
+    document.getElementById("calcBtn").onclick = () => {
+      const t = T[locale];
+      const w = parseFloat(document.getElementById("weightInput").value.replace(/,/g, "."));
+      const c = parseFloat(document.getElementById("competitorInput").value.replace(/,/g, "."));
+      if (isNaN(w) || w <= 0) return;
+
+      const italaPerGramRial = Math.round(referencePrice * MULTIPLIER);
+      const italaTotalRial = Math.round(italaPerGramRial * w);
+      const competitorRial = isNaN(c) ? 0 : c * 10;
+      const competitorTotalRial = isNaN(c) ? 0 : Math.round(competitorRial * w);
+      const diff = italaTotalRial - competitorTotalRial;
+
+      let betterHtml = "";
+      if (competitorTotalRial > 0) {
+        let msg, cls;
+        if (diff > 0) { msg = t.calculator.italaBetter; cls = "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300"; }
+        else if (diff < 0) { msg = t.calculator.competitorBetter; cls = "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300"; }
+        else { msg = t.calculator.equal; cls = "bg-zinc-100 dark:bg-zinc-800 muted"; }
+        betterHtml = `
+          <div class="flex justify-between"><span class="muted">${t.calculator.competitorTotal}</span><span class="font-semibold text-lg">${fmt(toToman(competitorTotalRial))} ${locale === "fa" ? "تومان" : "Toman"}</span></div>
+          <div class="rounded-xl p-4 text-center font-medium ${cls}">
+            ${msg}
+            ${diff !== 0 ? `<div class="mt-1 text-sm opacity-80">${t.calculator.difference}: ${fmt(toToman(Math.abs(diff)))} ${locale === "fa" ? "تومان" : "Toman"}</div>` : ""}
+          </div>
+        `;
+      }
+
+      const box = document.getElementById("resultBox");
+      box.classList.remove("hidden");
+      box.innerHTML = `
+        <div class="flex justify-between"><span class="muted">${t.calculator.italaPrice}</span><span class="font-semibold text-lg">${fmt(toToman(italaPerGramRial))} ${locale === "fa" ? "تومان" : "Toman"}</span></div>
+        <div class="flex justify-between"><span class="muted">${t.calculator.italaTotal}</span><span class="font-bold text-xl text-gold-600 dark:text-gold-400">${fmt(toToman(italaTotalRial))} ${locale === "fa" ? "تومان" : "Toman"}</span></div>
+        ${betterHtml}
+      `;
+    };
+
+    // Chart
+    function getChartData() {
+      if (!history.length) return [];
+      const sorted = [...history].sort((a, b) => a.timestamp - b.timestamp);
+      if (currentRange === "daily") {
+        return sorted.map(h => ({ time: h.date, value: toToman(h.price) }));
+      }
+      const map = new Map();
+      for (const h of sorted) {
+        const d = new Date(h.timestamp);
+        let key;
+        if (currentRange === "weekly") {
+          const day = d.getDay();
+          const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+          const mon = new Date(d); mon.setDate(diff);
+          key = mon.toISOString().slice(0, 10);
+        } else {
+          key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
+        }
+        map.set(key, toToman(h.price));
+      }
+      return Array.from(map.entries()).map(([time, value]) => ({ time, value })).sort((a, b) => a.time.localeCompare(b.time));
+    }
+
+    function initChart() {
+      const container = document.getElementById("chartContainer");
+      container.innerHTML = "";
+      const isDark = theme === "dark";
+      chart = LightweightCharts.createChart(container, {
+        layout: { background: { type: "solid", color: "transparent" }, textColor: isDark ? "#a09a90" : "#6b6560", fontFamily: "Vazirmatn, Inter, sans-serif" },
+        grid: { vertLines: { color: isDark ? "#1f1f1f" : "#f0e9dc" }, horzLines: { color: isDark ? "#1f1f1f" : "#f0e9dc" } },
+        width: container.clientWidth,
+        height: 320,
+        rightPriceScale: { borderVisible: false },
+        timeScale: { borderVisible: false },
+        handleScroll: { vertTouchDrag: false }
+      });
+      series = chart.addAreaSeries({
+        lineColor: "#d4af37",
+        topColor: "rgba(212,175,55,0.35)",
+        bottomColor: "rgba(212,175,55,0.02)",
+        lineWidth: 2
+      });
+      updateChart();
+      window.addEventListener("resize", () => chart && chart.applyOptions({ width: container.clientWidth }));
+    }
+
+    function updateChart() {
+      if (!series || !chart) return;
+      const data = getChartData();
+      if (data.length) {
+        series.setData(data);
+        chart.timeScale().fitContent();
+      }
+    }
+
+    document.querySelectorAll(".range-btn").forEach(btn => {
+      btn.onclick = () => {
+        currentRange = btn.dataset.range;
+        document.querySelectorAll(".range-btn").forEach(b => {
+          b.classList.remove("bg-gold-500", "text-white");
+          b.classList.add("bg-gold-50", "dark:bg-zinc-800");
+        });
+        btn.classList.add("bg-gold-500", "text-white");
+        btn.classList.remove("bg-gold-50", "dark:bg-zinc-800");
+        updateChart();
+      };
+    });
+
+    // Load data
+    async function load() {
+      try {
+        const res = await fetch("./data/price.txt");
+        const txt = await res.text();
+        const p = parseInt(txt.replace(/[^\d]/g, ""), 10);
+        if (!isNaN(p) && p > 0) referencePrice = p;
+      } catch {}
+      try {
+        const res = await fetch("./data/price-history.json");
+        history = await res.json();
+      } catch {
+        history = [{ date: new Date().toISOString().slice(0,10), timestamp: Date.now(), price: referencePrice }];
+      }
+      applyLocale();
+      applyTheme();
+      initChart();
+    }
+
+    load();
+  </script>
+</body>
+</html>
