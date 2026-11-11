@@ -238,14 +238,16 @@
 
     let locale = localStorage.getItem("itala-locale") || "fa";
     let theme = localStorage.getItem("itala-theme") || "light";
-    let referencePrice = 38500000; // Rial
+    let referencePrice = 25000000; // Toman (fallback)
     let history = [];
     let currentRange = "daily";
     let chart = null;
     let series = null;
 
-    const MULTIPLIER = 0.98;
-    const toToman = r => Math.round(r / 10);
+    const API_BASE = "https://api.itala.top";
+    const MULTIPLIER = 0.98; // applied on frontend
+    // Prices from API and history are already in Toman
+    const toToman = n => Math.round(Number(n) || 0);
     const fmt = (n) => new Intl.NumberFormat(locale === "fa" ? "fa-IR" : "en-US").format(Math.round(n));
 
     function applyLocale() {
@@ -301,6 +303,7 @@
     }
 
     function updatePrices() {
+      // referencePrice is Toman from API; apply margin on frontend
       const p = toToman(Math.round(referencePrice * MULTIPLIER));
       document.getElementById("price18k").textContent = fmt(p);
       document.getElementById("priceMelted").textContent = fmt(p);
@@ -339,23 +342,24 @@
       const c = parseFloat(document.getElementById("competitorInput").value.replace(/,/g, "."));
       if (isNaN(w) || w <= 0) return;
 
-      const italaPerGramRial = Math.round(referencePrice * MULTIPLIER);
-      const italaTotalRial = Math.round(italaPerGramRial * w);
-      const competitorRial = isNaN(c) ? 0 : c * 10;
-      const competitorTotalRial = isNaN(c) ? 0 : Math.round(competitorRial * w);
-      const diff = italaTotalRial - competitorTotalRial;
+      // All values in Toman
+      const italaPerGram = Math.round(referencePrice * MULTIPLIER);
+      const italaTotal = Math.round(italaPerGram * w);
+      const competitorPerGram = isNaN(c) ? 0 : c;
+      const competitorTotal = isNaN(c) ? 0 : Math.round(competitorPerGram * w);
+      const diff = italaTotal - competitorTotal;
 
       let betterHtml = "";
-      if (competitorTotalRial > 0) {
+      if (competitorTotal > 0) {
         let msg, cls;
         if (diff > 0) { msg = t.calculator.italaBetter; cls = "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300"; }
         else if (diff < 0) { msg = t.calculator.competitorBetter; cls = "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300"; }
         else { msg = t.calculator.equal; cls = "bg-zinc-100 dark:bg-zinc-800 muted"; }
         betterHtml = `
-          <div class="flex justify-between"><span class="muted">${t.calculator.competitorTotal}</span><span class="font-semibold text-lg">${fmt(toToman(competitorTotalRial))} ${locale === "fa" ? "تومان" : "Toman"}</span></div>
+          <div class="flex justify-between"><span class="muted">${t.calculator.competitorTotal}</span><span class="font-semibold text-lg">${fmt(competitorTotal)} ${locale === "fa" ? "تومان" : "Toman"}</span></div>
           <div class="rounded-xl p-4 text-center font-medium ${cls}">
             ${msg}
-            ${diff !== 0 ? `<div class="mt-1 text-sm opacity-80">${t.calculator.difference}: ${fmt(toToman(Math.abs(diff)))} ${locale === "fa" ? "تومان" : "Toman"}</div>` : ""}
+            ${diff !== 0 ? `<div class="mt-1 text-sm opacity-80">${t.calculator.difference}: ${fmt(Math.abs(diff))} ${locale === "fa" ? "تومان" : "Toman"}</div>` : ""}
           </div>
         `;
       }
@@ -363,8 +367,8 @@
       const box = document.getElementById("resultBox");
       box.classList.remove("hidden");
       box.innerHTML = `
-        <div class="flex justify-between"><span class="muted">${t.calculator.italaPrice}</span><span class="font-semibold text-lg">${fmt(toToman(italaPerGramRial))} ${locale === "fa" ? "تومان" : "Toman"}</span></div>
-        <div class="flex justify-between"><span class="muted">${t.calculator.italaTotal}</span><span class="font-bold text-xl text-gold-600 dark:text-gold-400">${fmt(toToman(italaTotalRial))} ${locale === "fa" ? "تومان" : "Toman"}</span></div>
+        <div class="flex justify-between"><span class="muted">${t.calculator.italaPrice}</span><span class="font-semibold text-lg">${fmt(italaPerGram)} ${locale === "fa" ? "تومان" : "Toman"}</span></div>
+        <div class="flex justify-between"><span class="muted">${t.calculator.italaTotal}</span><span class="font-bold text-xl text-gold-600 dark:text-gold-400">${fmt(italaTotal)} ${locale === "fa" ? "تومان" : "Toman"}</span></div>
         ${betterHtml}
       `;
     };
@@ -438,20 +442,53 @@
       };
     });
 
-    // Load data
+    // Load data from Cloudflare Worker (Nerkh-backed)
     async function load() {
+      // Current price
       try {
-        const res = await fetch("./data/price.txt");
-        const txt = await res.text();
-        const p = parseInt(txt.replace(/[^\d]/g, ""), 10);
-        if (!isNaN(p) && p > 0) referencePrice = p;
-      } catch {}
-      try {
-        const res = await fetch("./data/price-history.json");
-        history = await res.json();
-      } catch {
-        history = [{ date: new Date().toISOString().slice(0,10), timestamp: Date.now(), price: referencePrice }];
+        const res = await fetch(`${API_BASE}/api/price`);
+        if (res.ok) {
+          const data = await res.json();
+          const p = Number(data.price || data.price18k);
+          if (p > 0) referencePrice = p;
+        }
+      } catch (e) {
+        console.warn("Price API failed, trying local fallback", e);
+        try {
+          const res = await fetch("./data/price.txt");
+          const txt = await res.text();
+          const p = parseInt(txt.replace(/[^\d]/g, ""), 10);
+          // Old local file was stored as "Rial-style" (Toman × 10)
+          if (!isNaN(p) && p > 0) referencePrice = Math.round(p / 10);
+        } catch {}
       }
+
+      // History
+      try {
+        const res = await fetch(`${API_BASE}/api/history`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.history) && data.history.length) {
+            history = data.history;
+          }
+        }
+      } catch (e) {
+        console.warn("History API failed, trying local fallback", e);
+      }
+      if (!history.length) {
+        try {
+          const res = await fetch("./data/price-history.json");
+          const raw = await res.json();
+          // Convert old Rial-style history to Toman if values look like old scale
+          history = raw.map(h => ({
+            ...h,
+            price: h.price > 100000000 ? Math.round(h.price / 10) : h.price
+          }));
+        } catch {
+          history = [{ date: new Date().toISOString().slice(0,10), timestamp: Date.now(), price: referencePrice }];
+        }
+      }
+
       applyLocale();
       applyTheme();
       initChart();

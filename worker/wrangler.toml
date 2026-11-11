@@ -1,0 +1,11 @@
+name = "itala-price-api"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+[[kv_namespaces]]
+binding = "PRICES_KV"
+id = "83217fd94eca46558f9f2f45f076506b"
+preview_id = "32041cc39b624de8962ffbb7e8db5125"
+
+[triggers]
+crons = ["0 * * * *"]

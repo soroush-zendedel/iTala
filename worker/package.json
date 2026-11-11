@@ -1,0 +1,15 @@
+{
+  "name": "itala-price-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Worker that proxies Nerkh gold prices and maintains live history for itala.top",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "secret:nerkh": "wrangler secret put NERKH_IO_TOKEN"
+  },
+  "devDependencies": {
+    "wrangler": "^4.160.1"
+  }
+}
