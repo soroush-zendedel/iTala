@@ -82,7 +82,7 @@
           <div class="rounded-2xl border card p-6 shadow-sm hover:shadow-md transition">
             <div class="flex items-center gap-2 mb-4">
               <span class="text-gold-500">⚖️</span>
-              <h2 class="font-semibold text-lg" data-i18n="price.italaMelted">طلای ذوب‌شده</h2>
+              <h2 class="font-semibold text-lg" data-i18n="price.italaMelted">طلای آب‌شده</h2>
             </div>
             <div class="flex items-baseline gap-1">
               <span id="priceMelted" class="text-3xl sm:text-4xl font-bold text-gold-600 dark:text-gold-400">—</span>
@@ -103,7 +103,7 @@
             <label class="block text-sm font-medium mb-2" data-i18n="calculator.category">دسته طلا</label>
             <div class="flex gap-3">
               <button type="button" data-cat="18k" class="cat-btn flex-1 rounded-xl py-3 text-sm font-medium bg-gold-500 text-white">طلای ۱۸ عیار</button>
-              <button type="button" data-cat="melted" class="cat-btn flex-1 rounded-xl py-3 text-sm font-medium bg-gold-50 dark:bg-zinc-800 hover:bg-gold-100">طلای ذوب‌شده</button>
+              <button type="button" data-cat="melted" class="cat-btn flex-1 rounded-xl py-3 text-sm font-medium bg-gold-50 dark:bg-zinc-800 hover:bg-gold-100">طلای آب‌شده</button>
             </div>
           </div>
           <div>
@@ -188,7 +188,7 @@
         brand: "ایتالا", tagline: "قبل از فروش طلا، قیمت ما رو مقایسه کن.",
         nav: { home: "خانه", calculator: "ماشین‌حساب", charts: "نمودار قیمت", process: "فرآیند معامله", contact: "تماس" },
         hero: { title: "قیمت خرید طلای شما" },
-        price: { itala18k: "طلای ۱۸ عیار", italaMelted: "طلای ذوب‌شده", unit: "تومان / هر گرم", note: "قیمت نهایی پس از توزین و تعیین عیار در محل معامله مشخص می‌شود." },
+        price: { itala18k: "طلای ۱۸ عیار", italaMelted: "طلای آب‌شده", unit: "تومان / هر گرم", note: "قیمت نهایی پس از توزین و تعیین عیار در محل معامله مشخص می‌شود." },
         calculator: { title: "ماشین‌حساب مقایسه قیمت", category: "دسته طلا", weight: "وزن (گرم)", competitor: "قیمت خریدار دیگر (هر گرم به تومان)", calculate: "محاسبه", italaPrice: "قیمت ایتالا (هر گرم)", italaTotal: "پیشنهاد ایتالا", competitorTotal: "پیشنهاد رقیب", difference: "تفاوت", italaBetter: "پیشنهاد ایتالا بهتر است", competitorBetter: "پیشنهاد رقیب بهتر است", equal: "هر دو پیشنهاد برابر هستند" },
         charts: { title: "نمودار قیمت تاریخی", daily: "روزانه", weekly: "هفتگی", monthly: "ماهانه" },
         process: {
@@ -213,7 +213,7 @@
         brand: "ITALA", tagline: "Before selling your gold, compare our price.",
         nav: { home: "Home", calculator: "Calculator", charts: "Price Charts", process: "Process", contact: "Contact" },
         hero: { title: "We Buy Your Gold" },
-        price: { itala18k: "18-karat gold", italaMelted: "Melted gold", unit: "Toman / per gram", note: "Final price is determined after weighing and purity verification at the transaction location." },
+        price: { itala18k: "18-karat gold", italaMelted: "Melted gold (ābshodeh)", unit: "Toman / per gram", note: "Final price is determined after weighing and purity verification at the transaction location." },
         calculator: { title: "Price Comparison Calculator", category: "Gold category", weight: "Weight (grams)", competitor: "Other buyer's price (per gram in Toman)", calculate: "Calculate", italaPrice: "ITALA price (per gram)", italaTotal: "ITALA offer", competitorTotal: "Competitor offer", difference: "Difference", italaBetter: "ITALA offer is better", competitorBetter: "Competitor offer is better", equal: "Both offers are equal" },
         charts: { title: "Historical Price Chart", daily: "Daily", weekly: "Weekly", monthly: "Monthly" },
         process: {
@@ -238,7 +238,8 @@
 
     let locale = localStorage.getItem("itala-locale") || "fa";
     let theme = localStorage.getItem("itala-theme") || "light";
-    let referencePrice = 25000000; // Toman (fallback)
+    let referencePrice = 25000000; // Toman 18k (fallback)
+    let referencePriceMelted = 25000000; // Toman melted per gram (fallback)
     let history = [];
     let currentRange = "daily";
     let chart = null;
@@ -303,10 +304,11 @@
     }
 
     function updatePrices() {
-      // referencePrice is Toman from API; apply margin on frontend
-      const p = toToman(Math.round(referencePrice * MULTIPLIER));
-      document.getElementById("price18k").textContent = fmt(p);
-      document.getElementById("priceMelted").textContent = fmt(p);
+      // prices are Toman from API; apply margin on frontend
+      const p18 = toToman(Math.round(referencePrice * MULTIPLIER));
+      const pM = toToman(Math.round(referencePriceMelted * MULTIPLIER));
+      document.getElementById("price18k").textContent = fmt(p18);
+      document.getElementById("priceMelted").textContent = fmt(pM);
     }
 
     // Theme & Lang
@@ -342,8 +344,9 @@
       const c = parseFloat(document.getElementById("competitorInput").value.replace(/,/g, "."));
       if (isNaN(w) || w <= 0) return;
 
-      // All values in Toman
-      const italaPerGram = Math.round(referencePrice * MULTIPLIER);
+      // All values in Toman – use selected category price
+      const base = selectedCat === "melted" ? referencePriceMelted : referencePrice;
+      const italaPerGram = Math.round(base * MULTIPLIER);
       const italaTotal = Math.round(italaPerGram * w);
       const competitorPerGram = isNaN(c) ? 0 : c;
       const competitorTotal = isNaN(c) ? 0 : Math.round(competitorPerGram * w);
@@ -449,8 +452,10 @@
         const res = await fetch(`${API_BASE}/api/price`);
         if (res.ok) {
           const data = await res.json();
-          const p = Number(data.price || data.price18k);
-          if (p > 0) referencePrice = p;
+          const p18 = Number(data.price18k || data.price);
+          const pM = Number(data.priceMelted || data.price18k || data.price);
+          if (p18 > 0) referencePrice = p18;
+          if (pM > 0) referencePriceMelted = pM;
         }
       } catch (e) {
         console.warn("Price API failed, trying local fallback", e);
